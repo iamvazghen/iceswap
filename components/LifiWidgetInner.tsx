@@ -9,7 +9,11 @@ import { SolanaProvider } from "@lifi/widget-provider-solana";
 // EVM wallets: wagmi's default multiInjectedProviderDiscovery (EIP-6963) auto-detects
 // every installed extension wallet; metaMask/coinbase add SDK fallbacks; WalletConnect
 // (mobile/QR) turns on only when a projectId is provided.
-const wcProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+// The WalletConnect projectId is PUBLIC (it ships in every dApp's client bundle and is
+// domain-restricted in the Reown dashboard, not secret). Hardcoded as a fallback so the
+// QR/mobile flow never breaks on a missing/empty env injection. Override via env if needed.
+const wcProjectId =
+  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "ca22014226fa6fc1795ff48b236accaf";
 
 const config: Partial<WidgetConfig> = {
   integrator: "iceswap",
