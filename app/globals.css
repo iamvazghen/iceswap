@@ -1,26 +1,233 @@
 @import "tailwindcss";
 
+/* Hallmark · macrostructure: Marquee Hero · tone: bright-frost / icy-premium · anchor hue: glacier-blue 235
+ * theme: custom Bright Frost. Source of truth for tokens; tokens.css is the portable mirror. */
+
+@theme {
+  --color-paper: oklch(97% 0.012 235);
+  --color-paper-2: oklch(99% 0.006 235);
+  --color-paper-3: oklch(94% 0.02 235);
+
+  --color-ink: oklch(32% 0.045 255);
+  --color-ink-soft: oklch(52% 0.035 250);
+  --color-ink-faint: oklch(68% 0.025 245);
+
+  --color-accent: oklch(58% 0.15 245);
+  --color-accent-bright: oklch(72% 0.15 220);
+  --color-accent-deep: oklch(46% 0.13 255);
+
+  --color-inflow: oklch(66% 0.16 165);
+  --color-outflow: oklch(62% 0.19 22);
+
+  --color-line: oklch(89% 0.02 235);
+  --color-line-strong: oklch(82% 0.03 240);
+  --color-focus: oklch(60% 0.16 230);
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --text-display: clamp(2.75rem, 6vw, 5rem);
+  --text-display-s: clamp(2.25rem, 4.5vw, 3.5rem);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --dur-fast: 140ms;
+  --dur-mid: 280ms;
+  --dur-slow: 520ms;
+  --radius-sm: 0.625rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: clip;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  /* layered ice atmosphere — soft glacial light from corners */
+  background-image:
+    radial-gradient(60rem 40rem at 12% -10%, oklch(80% 0.09 220 / 0.5), transparent 60%),
+    radial-gradient(50rem 40rem at 100% 0%, oklch(78% 0.1 250 / 0.45), transparent 55%),
+    radial-gradient(70rem 50rem at 50% 120%, oklch(85% 0.06 200 / 0.4), transparent 60%);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-style: normal;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.font-mono, .tnum { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- Liquid glass system ---------- */
+/* Position lives in @layer components (below Tailwind's utilities layer) so .fixed/.absolute
+   utilities still win — otherwise unlayered `.glass` beats layered utilities regardless of
+   specificity, forcing position:relative on fixed/absolute glass elements (broke mobile nav). */
+@layer components {
+  .glass { position: relative; }
+}
+.glass {
+  background: linear-gradient(135deg, oklch(100% 0 0 / 0.7), oklch(98% 0.01 235 / 0.4));
+  backdrop-filter: blur(16px) saturate(165%);
+  -webkit-backdrop-filter: blur(16px) saturate(165%);
+  border: 1px solid oklch(100% 0 0 / 0.65);
+  box-shadow:
+    0 10px 34px -10px oklch(55% 0.14 245 / 0.28),
+    inset 0 1px 0 oklch(100% 0 0 / 0.9),
+    inset 0 -2px 3px oklch(70% 0.08 240 / 0.22);
+}
+/* specular sheen sweeping the top edge */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(120deg, oklch(100% 0 0 / 0.95), transparent 40%, transparent 60%, oklch(85% 0.1 230 / 0.6));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* glass button — liquid-glass feel on every CTA */
+.glass-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  isolation: isolate;
+  transition: transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-mid) var(--ease-out),
+    background var(--dur-mid) var(--ease-out);
+}
+.glass-btn:hover { transform: translateY(-1px); }
+.glass-btn:active { transform: translateY(0.5px); }
+.glass-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+/* travelling highlight on hover */
+.glass-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 0%), oklch(100% 0 0 / 0.55), transparent 45%);
+  opacity: 0;
+  transition: opacity var(--dur-mid) var(--ease-out);
+  pointer-events: none;
+  z-index: -1;
+}
+.glass-btn:hover::after { opacity: 1; }
+
+/* Translucent so the ice behind refracts through the tinted glass (liquid-glass quality). */
+.glass-btn-primary {
+  color: oklch(99% 0 0);
+  background: linear-gradient(135deg, oklch(72% 0.15 220 / 0.82), oklch(48% 0.14 252 / 0.9));
+  backdrop-filter: blur(10px) saturate(175%);
+  -webkit-backdrop-filter: blur(10px) saturate(175%);
+  border: 1px solid oklch(100% 0 0 / 0.45);
+  text-shadow: 0 1px 2px oklch(35% 0.1 255 / 0.45);
+  box-shadow:
+    0 12px 28px -8px oklch(52% 0.16 245 / 0.55),
+    inset 0 1.5px 0 oklch(100% 0 0 / 0.6),
+    inset 0 -3px 6px oklch(40% 0.12 255 / 0.35),
+    inset 2px 0 5px oklch(85% 0.1 205 / 0.3),   /* cool chromatic edge */
+    inset -2px 0 5px oklch(60% 0.14 285 / 0.3); /* warm chromatic edge */
+}
+.glass-btn-primary:hover {
+  box-shadow:
+    0 16px 34px -8px oklch(52% 0.16 245 / 0.62),
+    inset 0 1.5px 0 oklch(100% 0 0 / 0.7),
+    inset 0 -3px 6px oklch(40% 0.12 255 / 0.4),
+    inset 2px 0 6px oklch(85% 0.1 205 / 0.38),
+    inset -2px 0 6px oklch(60% 0.14 285 / 0.38);
+}
+
+.glass-btn-ghost {
+  color: var(--color-ink);
+  background: linear-gradient(135deg, oklch(100% 0 0 / 0.55), oklch(96% 0.02 235 / 0.32));
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid oklch(100% 0 0 / 0.7);
+  box-shadow:
+    0 8px 22px -12px oklch(55% 0.14 245 / 0.35),
+    inset 0 1.5px 0 oklch(100% 0 0 / 0.95),
+    inset 0 -2px 4px oklch(70% 0.08 240 / 0.2),
+    inset 2px 0 5px oklch(85% 0.1 205 / 0.2),
+    inset -2px 0 5px oklch(75% 0.12 270 / 0.2);
+}
+
+/* Real backdrop refraction where the browser supports url() filters (Chromium). */
+@supports (backdrop-filter: url("#ice-refract-btn")) {
+  .glass-btn-ghost { backdrop-filter: url(#ice-refract-btn) blur(11px) saturate(165%); }
+  .glass-btn-primary { backdrop-filter: url(#ice-refract-btn) blur(9px) saturate(180%); }
+  .glass { backdrop-filter: url(#ice-refract-btn) blur(16px) saturate(165%); }
+}
+
+.hairline { border-color: var(--color-line); }
+
+/* ---------- AI chat ---------- */
+@keyframes msg-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes caret-blink { 0%, 45% { opacity: 1; } 55%, 100% { opacity: 0; } }
+@keyframes think-bounce { 0%, 80%, 100% { transform: translateY(0); opacity: 0.35; } 40% { transform: translateY(-4px); opacity: 1; } }
+
+.msg-in { animation: msg-in var(--dur-mid) var(--ease-out) both; }
+.stream-caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.5ch; height: 1.05em;
+  margin-left: 1px;
+  vertical-align: -0.15em;
+  border-radius: 1px;
+  background: var(--color-accent);
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+/* markdown prose inside assistant messages */
+.chat-md { font-size: 0.9rem; line-height: 1.6; color: var(--color-ink); word-break: break-word; }
+.chat-md > :first-child { margin-top: 0; }
+.chat-md > :last-child { margin-bottom: 0; }
+.chat-md p { margin: 0.55rem 0; }
+.chat-md strong { font-weight: 700; }
+.chat-md em { font-style: italic; }
+.chat-md ul, .chat-md ol { margin: 0.55rem 0; padding-left: 1.25rem; }
+.chat-md li { margin: 0.3rem 0; }
+.chat-md ul li::marker { color: var(--color-accent); }
+.chat-md ol li::marker { color: var(--color-accent); font-weight: 600; }
+.chat-md h1, .chat-md h2, .chat-md h3, .chat-md h4 { font-family: var(--font-display); font-weight: 700; line-height: 1.2; margin: 0.85rem 0 0.4rem; }
+.chat-md h1 { font-size: 1.2rem; } .chat-md h2 { font-size: 1.1rem; } .chat-md h3 { font-size: 1rem; }
+.chat-md a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
+.chat-md code { font-family: var(--font-mono); font-size: 0.82em; background: oklch(90% 0.025 235 / 0.7); padding: 0.12em 0.4em; border-radius: 0.35rem; color: var(--color-accent-deep); }
+.chat-md pre { background: oklch(96% 0.012 235); border: 1px solid var(--color-line); border-radius: var(--radius-sm); padding: 0.75rem 0.85rem; overflow-x: auto; margin: 0.6rem 0; }
+.chat-md pre code { background: none; padding: 0; color: var(--color-ink); font-size: 0.8rem; }
+.chat-md blockquote { border-left: 3px solid var(--color-accent); padding-left: 0.8rem; margin: 0.6rem 0; color: var(--color-ink-soft); }
+.chat-md hr { border: 0; border-top: 1px solid var(--color-line); margin: 0.85rem 0; }
+.chat-md table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin: 0.6rem 0; display: block; overflow-x: auto; }
+.chat-md th, .chat-md td { border: 1px solid var(--color-line); padding: 0.4rem 0.55rem; text-align: left; white-space: nowrap; }
+.chat-md th { background: oklch(90% 0.02 235 / 0.55); font-weight: 600; }
+.chat-md tnum, .chat-md td { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto; }
+  .glass-btn:hover { transform: none; }
 }

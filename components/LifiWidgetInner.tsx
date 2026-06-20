@@ -1,0 +1,46 @@
+"use client";
+
+import { LiFiWidget, type WidgetConfig } from "@lifi/widget";
+import { EthereumProvider } from "@lifi/widget-provider-ethereum";
+import { SolanaProvider } from "@lifi/widget-provider-solana";
+
+// Client-only (loaded via dynamic ssr:false in LifiWidget) so wagmi/Solana
+// wallet contexts never execute during SSR.
+// EVM wallets: wagmi's default multiInjectedProviderDiscovery (EIP-6963) auto-detects
+// every installed extension wallet; metaMask/coinbase add SDK fallbacks; WalletConnect
+// (mobile/QR) turns on only when a projectId is provided.
+const wcProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+
+const config: Partial<WidgetConfig> = {
+  integrator: "iceswap",
+  appearance: "light",
+  variant: "compact",
+  theme: {
+    colorSchemes: {
+      light: {
+        palette: {
+          primary: { main: "#2f7be6" },
+          secondary: { main: "#37c7d4" },
+        },
+      },
+    },
+    shape: { borderRadius: 14 },
+    container: {
+      borderRadius: "20px",
+      boxShadow: "0 18px 50px -18px rgba(47,123,230,0.35)",
+      border: "1px solid rgba(255,255,255,0.7)",
+    },
+  },
+  providers: [
+    EthereumProvider({
+      metaMask: true,
+      coinbase: true,
+      ...(wcProjectId ? { walletConnect: { projectId: wcProjectId } } : {}),
+    }),
+    SolanaProvider(),
+  ],
+};
+
+export default function LifiWidgetInner() {
+  return <LiFiWidget integrator="iceswap" config={config as WidgetConfig} />;
+}
