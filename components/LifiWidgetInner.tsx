@@ -32,11 +32,13 @@ const config: Partial<WidgetConfig> = {
     },
   },
   providers: [
-    EthereumProvider({
-      metaMask: true,
-      coinbase: true,
-      ...(wcProjectId ? { walletConnect: { projectId: wcProjectId } } : {}),
-    }),
+    // No metaMask/coinbase SDK connectors — they always render a "Get Started" SDK option
+    // that masks the EIP-6963 detection of the user's *actual* installed extension and
+    // clicks into an install flow instead of connecting. With them removed,
+    // multiInjectedProviderDiscovery (on by default) auto-lists every installed extension
+    // (MetaMask, Rabby, Coinbase, Phantom, Brave…) and connects directly; walletConnect
+    // covers phones/tablets via QR.
+    EthereumProvider(wcProjectId ? { walletConnect: { projectId: wcProjectId } } : {}),
     SolanaProvider(),
   ],
 };

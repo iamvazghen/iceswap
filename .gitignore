@@ -45,3 +45,5 @@ dev.log
 
 # keep the env template (placeholders only)
 !.env.local.example
+
+.vercel
