@@ -8,13 +8,13 @@ Built lazy-correct: real liquidity trading (li.fi) + real on-chain data (free ke
 - Liquid-glass aesthetic: CSS frost system (`components/glass.tsx`) + vendored WebGL lib (`lib/liquid-glass/`, optional hero use)
 - Framer Motion (restrained) · Recharts (liquidity charts) · lucide-react (icons)
 - Swaps: `@lifi/widget` (Transak on-ramp included by the widget)
-- AI: Vercel AI SDK streaming → **freellmapi** (OpenAI-compatible). Swap key on deploy.
+- AI: Vercel AI SDK streaming → **Google Gemini** (`gemini-2.5-flash`, OpenAI-compatible endpoint).
 - Data: DefiLlama + CoinGecko (no API key, no signup)
 
 ## Pages
 1. **`/` Landing** — hero, live TVL/volume stat band, feature trio, how-it-works, CTA. ✅
 2. **`/exchange`** — li.fi widget, icy-themed. ✅
-3. **`/insights`** — AI chat (freellmapi) grounded in live market data + market cards. ✅
+3. **`/insights`** — AI chat (Gemini) grounded in live market data + market cards. ✅
 4. **`/liquidity`** — DefiLlama-style: chain TVL, protocol flows, date range, inflow/outflow. ✅
 
 ## Status
@@ -25,7 +25,7 @@ Built lazy-correct: real liquidity trading (li.fi) + real on-chain data (free ke
 - [x] AI Insights (streaming chat + live-data grounding + market cards)
 - [x] Liquidity Moves (TVL chart, top movers, date range)
 - [ ] Wallet connect polish / mobile sidebar drawer refinement
-- [ ] Deploy to Vercel + production freellmapi key
+- [x] Deploy to Vercel + production Gemini key
 
 ## Deliberately skipped (add when actually needed)
 - Covalent / The Graph / Dune — DefiLlama+CoinGecko cover the showcase. Add a provider behind `lib/data.ts` when you need wallet-level whale flows.
@@ -33,4 +33,4 @@ Built lazy-correct: real liquidity trading (li.fi) + real on-chain data (free ke
 - LangGraph multi-agent — single streaming call with live-data context is enough. Add when tool-calling chains are real.
 
 ## Env
-Copy `.env.local.example` → `.env.local`, set `FREELLMAPI_*`.
+Copy `.env.local.example` → `.env.local`, set `GEMINI_*`.

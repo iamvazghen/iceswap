@@ -113,7 +113,7 @@ export default function InsightsChat() {
         c[c.length - 1] = {
           role: "assistant",
           content:
-            "⚠️ Couldn't reach the AI service. The free models behind freellmapi may be rate-limited — try again, or set a dedicated key in `.env.local` (`FREELLMAPI_*`).",
+            "⚠️ Couldn't reach the AI service. The Gemini endpoint may be rate-limited — try again, or check the `GEMINI_*` keys in `.env.local`.",
         };
         return c;
       });

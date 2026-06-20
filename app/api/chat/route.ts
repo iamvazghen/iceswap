@@ -50,14 +50,16 @@ export async function POST(req: Request) {
     getCategories(),
   ]);
 
-  const openai = createOpenAI({
-    baseURL: process.env.FREELLMAPI_BASE_URL ?? "http://127.0.0.1:3001/v1",
-    apiKey: process.env.FREELLMAPI_KEY ?? "sk-local",
+  const gemini = createOpenAI({
+    baseURL:
+      process.env.GEMINI_BASE_URL ?? "https://generativelanguage.googleapis.com/v1beta/openai",
+    apiKey: process.env.GEMINI_API_KEY ?? "",
   });
 
   const result = streamText({
-    // .chat() forces /v1/chat/completions — freellmapi has no Responses API endpoint.
-    model: openai.chat(process.env.FREELLMAPI_MODEL ?? "auto"),
+    // .chat() forces /v1/chat/completions — Gemini's OpenAI-compatible endpoint has no
+    // Responses API.
+    model: gemini.chat(process.env.GEMINI_MODEL ?? "gemini-2.5-flash"),
     system: `${SYSTEM}\n\n${liveContext(coins, protocols, global, dex, categories)}`,
     messages,
     onError: ({ error }) => console.error("[chat] stream error:", error),
